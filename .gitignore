@@ -1,0 +1,4 @@
+build_*
+khafile.js
+*.blend?
+Main.hx
