@@ -10,14 +10,16 @@ import arm.leap.LeapController;
 import arm.leap.LeapBone;
 import arm.leap.LeapHuman;
 
+import arm.Config;
+
 class BoneTrait extends armory.Trait {
 	var ctrl:LeapController = LeapController.instance;
   var bone:LeapBone;
 
   @prop
-  var handType:String = 'left';
+  var handType:String;
   @prop
-  var fingerType : String = "right";
+  var fingerType:String;
   @prop
   var boneType:String;
 
@@ -45,16 +47,19 @@ class BoneTrait extends armory.Trait {
     }
 
     if(bone.position != null) {
-      object.transform.loc = new Vec4(bone.position[0], -bone.position[2], bone.position[1]).mult(1/10);
+      object.transform.loc.setFrom(bone.position.mult(Config.globalScale));
     }
 
     if(bone.rotation != null) {
-      object.transform.rot = new Quat().fromRotationMat(new Mat4(
-            cast(bone.rotation[0][0], FastFloat), -cast(bone.rotation[2][0], FastFloat), cast(bone.rotation[1][0], FastFloat), 0.0,
-            -cast(bone.rotation[0][2], FastFloat), cast(bone.rotation[2][2], FastFloat), -cast(bone.rotation[1][2], FastFloat), 0.0,
-            cast(bone.rotation[0][1], FastFloat), -cast(bone.rotation[2][1], FastFloat), cast(bone.rotation[1][1], FastFloat), 0.0,
-            0.0, 0.0, 0.0, 0.0
-      ));
+      object.transform.rot.setFrom(bone.rotation);
+    }
+
+    if(bone.length != null) {
+      object.transform.scale.set(
+        object.transform.size.x,
+        bone.length * Config.globalScale,
+        object.transform.size.z
+      );
     }
 
     object.transform.buildMatrix();

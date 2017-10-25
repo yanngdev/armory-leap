@@ -1,12 +1,10 @@
 package arm;
 
-import kha.FastFloat;
-
-import iron.math.Vec4;
-
 import arm.leap.LeapController;
 import arm.leap.LeapWrist;
 import arm.leap.LeapHuman;
+
+import arm.Config;
 
 class WristTrait extends armory.Trait {
 	var ctrl:LeapController;
@@ -35,7 +33,7 @@ class WristTrait extends armory.Trait {
     }
 
     if(wrist.position != null) {
-      object.transform.loc = new Vec4(wrist.position[0], -wrist.position[2], wrist.position[1]).mult(1/10);
+      object.transform.loc.setFrom(wrist.position.mult(Config.globalScale));
     }
 
     object.transform.buildMatrix();

@@ -4,7 +4,6 @@ import arm.leap.LeapHuman;
 import arm.leap.LeapData;
 import arm.leap.LeapBone;
 import arm.leap.LeapFinger;
-import arm.leap.LeapPalm;
 import arm.leap.LeapHand;
 import arm.leap.LeapWrist;
 
@@ -53,11 +52,6 @@ class LeapController {
   public function getHand(handType:LeapHumanHand):LeapHand {  //
     var hand = hands.filter(function(hand:LeapHand) return hand.type == handType);
     return hand.length > 0 ? hand[0] : null;
-  }
-
-  public function getPalm(handType:LeapHumanHand):LeapPalm {
-    var hand = getHand(handType);
-    return hand != null ? hand.palm : null;
   }
 
   public function getFinger(handType:LeapHumanHand, fingerType:LeapHumanFinger):LeapFinger {

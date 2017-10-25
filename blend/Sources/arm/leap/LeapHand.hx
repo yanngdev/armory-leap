@@ -1,18 +1,25 @@
 package arm.leap;
 
+import iron.math.Quat;
+import iron.math.Vec4;
+import iron.math.Mat4;
+
 import arm.leap.LeapHuman;
 import arm.leap.LeapData;
-import arm.leap.LeapPalm;
 import arm.leap.LeapWrist;
 
 class LeapHand {
   private var data:LeapDataHand;
-  private var fingersData:Array<LeapDataPointable>;
+  private var pointablesData:Array<LeapDataPointable>;
   public var id(get, never):Int;
   public var type:LeapHumanHand;
-  public var palm:LeapPalm = new LeapPalm();
   public var wrist:LeapWrist = new LeapWrist();
   public var fingers:Array<LeapFinger> = new Array();
+
+  public var position:Vec4 = new Vec4();
+  public var direction:Vec4 = new Vec4();
+  public var normal:Vec4 = new Vec4();
+  public var rotation:Quat = new Quat();
 
   public function new(type:LeapHumanHand) {
     this.type = type;
@@ -28,17 +35,36 @@ class LeapHand {
 
   public function update(handData:LeapDataHand, pointablesData:Array<LeapDataPointable>) {
     data = handData;
-    fingersData = pointablesData;
+    this.pointablesData = pointablesData;
 
-    palm.update(data.palmPosition, data.direction, data.palmNormal, data.s);
+    position.set(data.palmPosition[0], -  data.palmPosition[2],   data.palmPosition[1]);
+    direction.set(data.direction[0], -data.direction[2], data.direction[1]);
+    normal.set(data.palmNormal[0], -data.palmNormal[2], data.palmNormal[1]);
+
+    // https://developer.leapmotion.com/documentation/javascript/supplements/Leap_JSON.html?proglang=javascript
+    // Hand.basis is computed from the palmNormal and direction vectors. It is not included in the JSON data.
+    // https://community.leapmotion.com/t/solved-websocket-json-hand-absolut-rotation-not-absolut-to-world/3037
+    // You could also create the basis matrix using the direction, palmNormal, and the cross product between direction and palmNormal. In the native API, we do this with:
+    // Vector crossed = handNormal.cross(direction);
+    // Matrix(crossed, -handNormal, -direction);
+    // BUT Blender.x=Leap.x, Blender.y=-Leap.z, Blender.z=Leap.y
+
+    var crossed = new Vec4().crossvecs(normal, direction);
+
+    rotation.fromRotationMat(new Mat4(
+      crossed.x, direction.x, -normal.x, 0,
+      crossed.y, direction.y, -normal.y, 0,
+      crossed.z, direction.z, -normal.z, 0,
+      0, 0, 0, 0
+    ));
 
     wrist.update(data.wrist);
 
     for(finger in fingers) {
-      var fingerData = fingersData.filter(function(fingerData:LeapDataPointable) return fingerData.type == LeapHuman.getFingerIndex(finger.type));
+      var pointableData = this.pointablesData.filter(function(pointableData:LeapDataPointable) return pointableData.type == LeapHuman.getFingerIndex(finger.type));
 
-      if(fingerData.length > 0) {
-        finger.update(fingerData[0]);
+      if(pointableData.length > 0) {
+        finger.update(pointableData[0]);
       }
     }
   }
