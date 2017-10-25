@@ -25,7 +25,7 @@ class LeapHand {
     this.type = type;
 
     for(type in Type.allEnums(LeapHumanFinger)) {
-      fingers.push(new LeapFinger(type));
+      fingers.push(new LeapFinger(this.type, type));
     }
   }
 
@@ -46,10 +46,10 @@ class LeapHand {
     // https://community.leapmotion.com/t/solved-websocket-json-hand-absolut-rotation-not-absolut-to-world/3037
     // You could also create the basis matrix using the direction, palmNormal, and the cross product between direction and palmNormal. In the native API, we do this with:
     // Vector crossed = handNormal.cross(direction);
-    // Matrix(crossed, -handNormal, -direction);
+    // Matrix(isLeft ? -crossed : crossed, -palmNormal, -direction);
     // BUT Blender.x=Leap.x, Blender.y=-Leap.z, Blender.z=Leap.y
 
-    var crossed = new Vec4().crossvecs(normal, direction);
+    var crossed = new Vec4().crossvecs(normal, direction);//.mult((type == LeapHumanHand.Left) ? -1 : 1);
 
     rotation.fromRotationMat(new Mat4(
       crossed.x, direction.x, -normal.x, 0,

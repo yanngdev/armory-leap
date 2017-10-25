@@ -10,6 +10,7 @@ import arm.leap.LeapHuman;
 
 class LeapBone {
   public var type:LeapHumanBone;
+  public var handType:LeapHumanHand;
   public var prevJoint:Vec4 = new Vec4();
   public var nextJoint:Vec4 = new Vec4();
   public var rotation:Quat = new Quat();
@@ -18,7 +19,8 @@ class LeapBone {
   public var tip(get, never):Vec4;
   public var length:Float;
 
-  public function new(type:LeapHumanBone) {
+  public function new(handType:LeapHumanHand, type:LeapHumanBone) {
+    this.handType = handType;
     this.type = type;
   }
 
@@ -34,9 +36,9 @@ class LeapBone {
     this.prevJoint.set(prevJoint[0], -prevJoint[2], prevJoint[1]);
     this.nextJoint.set(nextJoint[0], -nextJoint[2], nextJoint[1]);
     this.rotation.fromRotationMat(new Mat4(
-          rotation[0][0], -rotation[2][0], rotation[1][0], 0.0,
-          -rotation[0][2], rotation[2][2], -rotation[1][2], 0.0,
-          rotation[0][1], -rotation[2][1], rotation[1][1], 0.0,
+          rotation[0][0] * ((handType == LeapHumanHand.Left) ? -1 : 1), -rotation[2][0], rotation[1][0], 0.0,
+          -rotation[0][2] * ((handType == LeapHumanHand.Left) ? -1 : 1), rotation[2][2], -rotation[1][2], 0.0,
+          rotation[0][1] * ((handType == LeapHumanHand.Left) ? -1 : 1), -rotation[2][1], rotation[1][1], 0.0,
           0.0, 0.0, 0.0, 0.0
     ));
 

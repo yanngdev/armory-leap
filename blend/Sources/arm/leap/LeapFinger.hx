@@ -8,15 +8,17 @@ import arm.leap.LeapBone;
 
 class LeapFinger {
   private var data:LeapDataPointable;
+  public var handType:LeapHumanHand;
   public var type:LeapHumanFinger;
   public var bones:Array<LeapBone> = new Array();
   public var tip:Vec4 = new Vec4();
 
-  public function new(type:LeapHumanFinger) {
+  public function new(handType:LeapHumanHand, type:LeapHumanFinger) {
+    this.handType = handType;
     this.type = type;
 
     for(type in Type.allEnums(LeapHumanBone)) {
-      bones.push(new LeapBone(type));
+      bones.push(new LeapBone(handType, type));
     }
   }
 
