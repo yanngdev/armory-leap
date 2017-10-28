@@ -2,6 +2,23 @@ package arm.leap;
 
 // https://developer.leapmotion.com/documentation/python/devguide/Leap_Overview.html
 
+@:enum
+abstract LeapHumanString(String) from String to String {
+  var Left = 'left';
+  var Right = 'right';
+
+  var Thumb = 'thumb';
+  var Index = 'index';
+  var Middle = 'middle';
+  var Ring = 'ring';
+  var Pinky = 'pinky';
+
+  var Metacarpal = 'metacarpal';
+  var Proximal = 'proximal';
+  var Intermediate = 'intermediate';
+  var Distal = 'distal';
+}
+
 // Hands
 enum LeapHumanHand {
   Left;
@@ -29,18 +46,16 @@ class LeapHuman {
   // Hands
   static public function getHandHuman(value:String):LeapHumanHand {
     return switch(Std.string(value)) {
-      case 'l': LeapHumanHand.Left;
-      case 'left': LeapHumanHand.Left;
-      case 'r':  LeapHumanHand.Right;
-      case 'right':  LeapHumanHand.Right;
+      case LeapHumanString.Left: LeapHumanHand.Left;
+      case LeapHumanString.Right:  LeapHumanHand.Right;
       default: null;
     }
   }
 
   static public function getHandString(value:LeapHumanHand):String {
     return switch(value) {
-      case Left: 'left';
-      case Right: 'right';
+      case Left: LeapHumanString.Left;
+      case Right: LeapHumanString.Right;
       default: null;
     }
   }
@@ -52,33 +67,11 @@ class LeapHuman {
   // Fingers
   static public function getFingerHuman(value:String):LeapHumanFinger {
     return switch(Std.string(value)) {
-      case 'thumb': LeapHumanFinger.Thumb;
-      case 'index': LeapHumanFinger.Index;
-      case 'middle': LeapHumanFinger.Middle;
-      case 'ring': LeapHumanFinger.Ring;
-      case 'pinky': LeapHumanFinger.Pinky;
-      default: null;
-    }
-  }
-
-  static public function getFingerString(value:LeapHumanFinger):String {
-    return switch(value) {
-      case Thumb: 'thumb';
-      case Index: 'index';
-      case Middle: 'middle';
-      case Ring: 'ring';
-      case Pinky: 'pinky';
-      default: null;
-    }
-  }
-
-  static public function getFingerHumanFromIndex(value:Int):LeapHumanFinger {
-    return switch(value) {
-      case 0: LeapHumanFinger.Thumb;
-      case 1: LeapHumanFinger.Index;
-      case 2: LeapHumanFinger.Middle;
-      case 3: LeapHumanFinger.Ring;
-      case 4: LeapHumanFinger.Pinky;
+      case LeapHumanString.Thumb: LeapHumanFinger.Thumb;
+      case LeapHumanString.Index: LeapHumanFinger.Index;
+      case LeapHumanString.Middle: LeapHumanFinger.Middle;
+      case LeapHumanString.Ring: LeapHumanFinger.Ring;
+      case LeapHumanString.Pinky: LeapHumanFinger.Pinky;
       default: null;
     }
   }
@@ -90,30 +83,10 @@ class LeapHuman {
   // Bones
   static public function getBoneHuman(value:String):LeapHumanBone {
     return switch(Std.string(value)) {
-      case 'metacarpal': LeapHumanBone.Metacarpal;
-      case 'proximal': LeapHumanBone.Proximal;
-      case 'intermediate': LeapHumanBone.Intermediate;
-      case 'distal': LeapHumanBone.Distal;
-      default: null;
-    }
-  }
-
-  static public function getBoneString(value:Int):String {
-    return switch(value) {
-      case 0: 'metacarpal';
-      case 1: 'proximal';
-      case 2: 'intermediate';
-      case 3: 'distal';
-      default: null;
-    }
-  }
-
-  static public function getBoneHumanFromIndex(value:Int):LeapHumanBone {
-    return switch(value) {
-      case 0: LeapHumanBone.Metacarpal;
-      case 1: LeapHumanBone.Proximal;
-      case 2: LeapHumanBone.Intermediate;
-      case 3: LeapHumanBone.Distal;
+      case LeapHumanString.Metacarpal: LeapHumanBone.Metacarpal;
+      case LeapHumanString.Proximal: LeapHumanBone.Proximal;
+      case LeapHumanString.Intermediate: LeapHumanBone.Intermediate;
+      case LeapHumanString.Distal: LeapHumanBone.Distal;
       default: null;
     }
   }

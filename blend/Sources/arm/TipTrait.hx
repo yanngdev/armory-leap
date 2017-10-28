@@ -1,5 +1,8 @@
 package arm;
 
+import iron.math.Vec4;
+import iron.object.Transform;
+
 import arm.leap.LeapController;
 import arm.leap.LeapBone;
 import arm.leap.LeapHuman;
@@ -17,6 +20,8 @@ class TipTrait extends armory.Trait {
   @prop
   var boneType:String;
 
+  var transform:Transform;
+
   public function new() {
     super();
 
@@ -32,18 +37,15 @@ class TipTrait extends armory.Trait {
       armory.system.Event.add('onLeapUpdate', function() {
         updateLeap();
       });
+
+      transform = object.transform;
     });
   }
 
   function updateLeap() {
-    if(bone == null) {
-      return;
-    }
-
-    if(bone.tip != null) {
+    if(bone != null && bone.tip != null) {
       object.transform.loc.setFrom(bone.tip.mult(Config.globalScale));
+      object.transform.buildMatrix();
     }
-
-    object.transform.buildMatrix();
   }
 }

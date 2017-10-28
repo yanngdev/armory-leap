@@ -18,6 +18,7 @@ class LeapBone {
   public var position(get, never):Vec4;
   public var tip(get, never):Vec4;
   public var length:Float;
+  public var center:Vec4;
 
   public function new(handType:LeapHumanHand, type:LeapHumanBone) {
     this.handType = handType;
@@ -43,5 +44,7 @@ class LeapBone {
     ));
 
     length = this.prevJoint.distanceTo(this.nextJoint);
+
+    center = Vec4.lerp(this.prevJoint, this.nextJoint, 0.5);
   }
 }

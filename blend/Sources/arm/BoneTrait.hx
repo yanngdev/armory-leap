@@ -1,11 +1,5 @@
 package arm;
 
-import kha.FastFloat;
-
-import iron.math.Vec4;
-import iron.math.Mat4;
-import iron.math.Quat;
-
 import arm.leap.LeapController;
 import arm.leap.LeapBone;
 import arm.leap.LeapHuman;
@@ -39,6 +33,13 @@ class BoneTrait extends armory.Trait {
         updateLeap();
       });
     });
+
+    notifyOnUpdate(function() {
+      trace(bone.center);
+      // if(bone.cente) {
+      //   object.visible = false;
+      // }
+    });
 	}
 
   function updateLeap() {
@@ -46,8 +47,8 @@ class BoneTrait extends armory.Trait {
       return;
     }
 
-    if(bone.position != null) {
-      object.transform.loc.setFrom(bone.position.mult(Config.globalScale));
+    if(bone.center != null) {
+      object.transform.loc.setFrom(bone.center.mult(Config.globalScale));
     }
 
     if(bone.rotation != null) {

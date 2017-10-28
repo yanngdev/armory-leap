@@ -49,7 +49,7 @@ class LeapController {
     return hand != null ? hand.wrist : null;
   }
 
-  public function getHand(handType:LeapHumanHand):LeapHand {  //
+  public function getHand(handType:LeapHumanHand):LeapHand {
     var hand = hands.filter(function(hand:LeapHand) return hand.type == handType);
     return hand.length > 0 ? hand[0] : null;
   }

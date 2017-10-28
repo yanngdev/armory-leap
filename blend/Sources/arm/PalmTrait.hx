@@ -1,11 +1,5 @@
 package arm;
 
-import kha.FastFloat;
-
-import iron.math.Vec4;
-import iron.math.Mat4;
-import iron.math.Quat;
-
 import arm.leap.LeapController;
 import arm.leap.LeapHand;
 import arm.leap.LeapHuman;
