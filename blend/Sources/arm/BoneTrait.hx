@@ -33,13 +33,6 @@ class BoneTrait extends armory.Trait {
         updateLeap();
       });
     });
-
-    notifyOnUpdate(function() {
-      trace(bone.center);
-      // if(bone.cente) {
-      //   object.visible = false;
-      // }
-    });
 	}
 
   function updateLeap() {
