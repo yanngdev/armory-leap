@@ -1,13 +1,12 @@
 package arm;
 
-import arm.leap.LeapController;
 import arm.leap.LeapBone;
 import arm.leap.LeapHuman;
 
+import arm.LeapTrait;
 import arm.Config;
 
-class BoneTrait extends armory.Trait {
-	var ctrl:LeapController = LeapController.instance;
+class BoneTrait extends LeapTrait {
   var bone:LeapBone;
 
   @prop
@@ -18,37 +17,31 @@ class BoneTrait extends armory.Trait {
   var boneType:String;
 
 	public function new() {
-		super();
+    super();
 
-    notifyOnInit(function() {
-      ctrl = LeapController.instance;
-
-      bone = ctrl.getBone(
-        LeapHuman.getHandHuman(handType),
-        LeapHuman.getFingerHuman(fingerType),
-        LeapHuman.getBoneHuman(boneType)
-      );
-
-      armory.system.Event.add('onLeapUpdate', function() {
-        updateLeap();
-      });
-    });
+    notifyOnInit(init);
 	}
 
-  function updateLeap() {
-    if(bone == null) {
-      return;
-    }
+  function init() {
+    initLeapTrait(this.handType);
 
-    if(bone.center != null) {
+    bone = ctrl.getBone(
+      LeapHuman.getHandHuman(handType),
+      LeapHuman.getFingerHuman(fingerType),
+      LeapHuman.getBoneHuman(boneType)
+    );
+  }
+
+  override function updateLeap() {
+    if(bone != null && bone.center != null) {
       object.transform.loc.setFrom(bone.center.mult(Config.globalScale));
     }
 
-    if(bone.rotation != null) {
+    if(bone != null && bone.rotation != null) {
       object.transform.rot.setFrom(bone.rotation);
     }
 
-    if(bone.length != null) {
+    if(bone != null && bone.length != null) {
       object.transform.scale.set(
         object.transform.size.x,
         bone.length * Config.globalScale,

@@ -45,6 +45,8 @@ enum LeapHumanBone {
 class LeapHuman {
   // Hands
   static public function getHandHuman(value:String):LeapHumanHand {
+    if(value == null) return null;
+
     return switch(Std.string(value)) {
       case LeapHumanString.Left: LeapHumanHand.Left;
       case LeapHumanString.Right:  LeapHumanHand.Right;
@@ -53,6 +55,8 @@ class LeapHuman {
   }
 
   static public function getHandString(value:LeapHumanHand):String {
+    if(value == null) return null;
+
     return switch(value) {
       case Left: LeapHumanString.Left;
       case Right: LeapHumanString.Right;
@@ -66,6 +70,8 @@ class LeapHuman {
 
   // Fingers
   static public function getFingerHuman(value:String):LeapHumanFinger {
+    if(value == null) return null;
+
     return switch(Std.string(value)) {
       case LeapHumanString.Thumb: LeapHumanFinger.Thumb;
       case LeapHumanString.Index: LeapHumanFinger.Index;
@@ -82,6 +88,8 @@ class LeapHuman {
 
   // Bones
   static public function getBoneHuman(value:String):LeapHumanBone {
+    if(value == null) return null;
+    
     return switch(Std.string(value)) {
       case LeapHumanString.Metacarpal: LeapHumanBone.Metacarpal;
       case LeapHumanString.Proximal: LeapHumanBone.Proximal;

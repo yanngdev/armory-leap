@@ -1,19 +1,23 @@
 package arm.leap;
 
+import haxe.Timer;
+
 import arm.leap.LeapHuman;
 import arm.leap.LeapData;
 import arm.leap.LeapBone;
 import arm.leap.LeapFinger;
 import arm.leap.LeapHand;
 import arm.leap.LeapWrist;
+import arm.leap.LeapArm;
+import arm.leap.LeapElbow;
 
 class LeapController {
   public static var instance(default, null):LeapController = new LeapController();
   #if (js && kha_webgl)
   private var ws:LeapWS;
   #end
-  var previousData:LeapData;
   public var hands:Array<LeapHand> = new Array();
+  public var data:LeapData;
 
   private function new() {
     #if (js && kha_webgl)
@@ -29,30 +33,36 @@ class LeapController {
     }
   }
 
-  public function update(data:LeapData = null) {
+  public function update(leapData:LeapData = null) {
     #if (js && kha_webgl)
-    if(data == null) {
-      data = this.ws.data;
-    }
+    data = leapData == null ? this.ws.data : leapData;
     #end
 
-    if(data == null || (previousData != null && data.id == previousData.id)) {
+    if(data == null) {
       return;
     }
 
     for(hand in hands) {
-      var handData:Array<LeapDataHand> = data.hands.filter(function(handData:LeapDataHand) return handData.type == LeapHuman.getHandString(hand.type));
+      var handData = getDataHand(hand.type);
 
-      if(handData.length > 0) {
-        var fingersData:Array<LeapDataPointable> = data.pointables.filter(function(pointableData:LeapDataPointable) return pointableData.handId == handData[0].id);
+      if(handData != null) {
+        var fingersData:Array<LeapDataPointable> = data.pointables.filter(function(pointableData:LeapDataPointable) return pointableData.handId == handData.id);
 
-        hand.update(handData[0], fingersData);
+        hand.update(handData, fingersData);
       }
     }
 
-    previousData = data;
-
     armory.system.Event.send('onLeapUpdate');
+  }
+
+  public function getElbow(handType:LeapHumanHand):LeapElbow {
+    var arm = getArm(handType);
+    return arm != null ? arm.elbow : null;
+  }
+
+  public function getArm(handType:LeapHumanHand):LeapArm {
+    var hand = getHand(handType);
+    return hand != null ? hand.arm : null;
   }
 
   public function getWrist(handType:LeapHumanHand):LeapWrist {
@@ -73,5 +83,10 @@ class LeapController {
   public function getBone(handType:LeapHumanHand, fingerType:LeapHumanFinger, boneType:LeapHumanBone):LeapBone {
     var finger = getFinger(handType, fingerType);
     return finger != null ? finger.getBone(boneType) : null;
+  }
+
+  public function getDataHand(handType:LeapHumanHand):LeapDataHand {
+    var handData:Array<LeapDataHand> = data.hands.filter(function(handData:LeapDataHand) return handData.type == LeapHuman.getHandString(handType));
+    return handData.length > 0 ? handData[0] : null;
   }
 }

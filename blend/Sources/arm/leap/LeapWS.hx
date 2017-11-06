@@ -19,7 +19,7 @@ class LeapWS {
 		this.websocket.onopen = function() {
 			trace('Leap Motion Socket client open');
 
-      this.websocket.send(haxe.Json.stringify({'background': true}));
+      this.websocket.send(haxe.Json.stringify({ 'background': true }));
 		}
   
     this.websocket.onmessage = function(event:Dynamic) {

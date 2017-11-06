@@ -34,11 +34,9 @@ class LeapFinger {
       data.dipPosition,
       data.btipPosition
     ];
-    var bonesRotations = data.bases;
-
     var i = 0;
     for(bone in bones) {
-      bone.update(bonesPositions[i], bonesPositions[i+1], bonesRotations[i]);
+      bone.update(bonesPositions[i], bonesPositions[i+1], data.bases[i]);
       i++;
     }
   }
