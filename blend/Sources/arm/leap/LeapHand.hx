@@ -7,22 +7,29 @@ import iron.math.Mat4;
 import arm.leap.LeapHuman;
 import arm.leap.LeapData;
 import arm.leap.LeapWrist;
+import arm.leap.LeapArm;
 
 class LeapHand {
   private var data:LeapDataHand;
   private var pointablesData:Array<LeapDataPointable>;
   public var id(get, never):Int;
   public var type:LeapHumanHand;
-  public var wrist:LeapWrist = new LeapWrist();
-  public var fingers:Array<LeapFinger> = new Array();
 
   public var position:Vec4 = new Vec4();
   public var direction:Vec4 = new Vec4();
   public var normal:Vec4 = new Vec4();
   public var rotation:Quat = new Quat();
 
+  public var fingers:Array<LeapFinger> = new Array();
+  public var wrist:LeapWrist;
+  public var arm:LeapArm;
+
   public function new(type:LeapHumanHand) {
     this.type = type;
+
+    wrist = new LeapWrist();
+
+    arm = new LeapArm(this.type);
 
     for(type in Type.allEnums(LeapHumanFinger)) {
       fingers.push(new LeapFinger(this.type, type));
@@ -37,7 +44,8 @@ class LeapHand {
     data = handData;
     this.pointablesData = pointablesData;
 
-    position.set(data.palmPosition[0], -  data.palmPosition[2],   data.palmPosition[1]);
+    // Update hand
+    position.set(data.palmPosition[0], -data.palmPosition[2], data.palmPosition[1]);
     direction.set(data.direction[0], -data.direction[2], data.direction[1]);
     normal.set(data.palmNormal[0], -data.palmNormal[2], data.palmNormal[1]);
 
@@ -58,8 +66,7 @@ class LeapHand {
       0, 0, 0, 0
     ));
 
-    wrist.update(data.wrist);
-
+    // Update fingers
     for(finger in fingers) {
       var pointableData = this.pointablesData.filter(function(pointableData:LeapDataPointable) return pointableData.type == LeapHuman.getFingerIndex(finger.type));
 
@@ -67,6 +74,12 @@ class LeapHand {
         finger.update(pointableData[0]);
       }
     }
+
+    // Update wrist
+    wrist.update(data.wrist);
+
+    // Update Arm
+    arm.update(data.armBasis, data.armWidth, data.elbow, wrist);
   }
 
   public function getFinger(fingerType:LeapHumanFinger):LeapFinger {

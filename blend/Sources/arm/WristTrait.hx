@@ -1,13 +1,12 @@
 package arm;
 
-import arm.leap.LeapController;
 import arm.leap.LeapWrist;
 import arm.leap.LeapHuman;
 
+import arm.LeapTrait;
 import arm.Config;
 
-class WristTrait extends armory.Trait {
-	var ctrl:LeapController;
+class WristTrait extends LeapTrait {
   var wrist:LeapWrist;
 
   @prop
@@ -17,22 +16,14 @@ class WristTrait extends armory.Trait {
 		super();
 
     notifyOnInit(function() {
-      ctrl = LeapController.instance;
-
+      initLeapTrait(this.handType);
+      
       wrist = ctrl.getWrist(LeapHuman.getHandHuman(handType));
-
-      armory.system.Event.add('onLeapUpdate', function() {
-        updateLeap();
-      });
     });
 	}
 
-  function updateLeap() {
-    if(wrist == null) {
-      return;
-    }
-
-    if(wrist.position != null) {
+  override function updateLeap() {
+    if(wrist != null && wrist.position != null) {
       object.transform.loc.setFrom(wrist.position.mult(Config.globalScale));
     }
 
